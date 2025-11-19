@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LSPD Field Training Program</title>
+    <link rel="icon" type="image/x-icon" href="/images/favicon.jpg">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="/images/ftplogo.jpg" alt="Field Training Program" class="logo">
+                <h1>LSPD FTP</h1>
+            </div>
+
+            <!-- Officer Profile -->
+            <div class="officer-profile">
+                <h3>Officer Profile</h3>
+                <form id="officerForm">
+                    <div class="form-group">
+                        <label for="officerName">Name</label>
+                        <input type="text" id="officerName" placeholder="John Doe">
+                    </div>
+                    <div class="form-group">
+                        <label for="officerBadge">Badge Number</label>
+                        <input type="text" id="officerBadge" placeholder="1234">
+                    </div>
+                    <div class="form-group">
+                        <label for="officerRank">Rank</label>
+                        <select id="officerRank">
+                            <option value="">Select Rank</option>
+                            <option value="Police Officer III">Police Officer III</option>
+                            <option value="Police Officer III+1">Police Officer III+1</option>
+                            <option value="Sergeant">Sergeant</option>
+                            <option value="Sergeant II">Sergeant II</option>
+                            <option value="Lieutenant">Lieutenant</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-primary">Save Profile</button>
+                </form>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="nav-menu">
+                <h3>Reports</h3>
+                <button class="nav-btn active" data-page="dashboard">
+                    <span class="nav-icon">📊</span>
+                    Dashboard
+                </button>
+                <button class="nav-btn" data-page="orientation">
+                    <span class="nav-icon">📋</span>
+                    Orientation Report
+                </button>
+                <button class="nav-btn" data-page="daily-observation">
+                    <span class="nav-icon">📝</span>
+                    Daily Observation
+                </button>
+                <button class="nav-btn" data-page="employee-comment">
+                    <span class="nav-icon">💬</span>
+                    Employee Comment
+                </button>
+                <button class="nav-btn" data-page="weekly-evaluation">
+                    <span class="nav-icon">📅</span>
+                    Weekly Evaluation
+                </button>
+                <button class="nav-btn" data-page="ftp-completion">
+                    <span class="nav-icon">✅</span>
+                    FTP Completion
+                </button>
+            </nav>
+
+            <!-- History -->
+            <div class="history-section">
+                <h3>Report History</h3>
+                <div id="historyList" class="history-list">
+                    <p class="empty-state">No reports yet</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard -->
+            <section id="dashboard" class="page active">
+                <div class="page-header">
+                    <h2>Dashboard</h2>
+                    <p>Welcome to the LSPD Field Training Program Portal</p>
+                </div>
+                <div class="dashboard-grid">
+                    <div class="stat-card">
+                        <h3>Total Reports</h3>
+                        <p class="stat-number" id="totalReports">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>This Week</h3>
+                        <p class="stat-number" id="weekReports">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>This Month</h3>
+                        <p class="stat-number" id="monthReports">0</p>
+                    </div>
+                </div>
+                <div class="recent-reports">
+                    <h3>Recent Reports</h3>
+                    <div id="recentReportsList"></div>
+                </div>
+            </section>
+
+            <!-- Orientation Report -->
+            <section id="orientation" class="page">
+                <div class="page-header">
+                    <h2>Introductory Patrol Report</h2>
+                    <p>First day orientation checklist</p>
+                </div>
+                <form id="orientationForm" class="report-form">
+                    <div class="form-section">
+                        <h3>Trainee Information</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="or_traineeName">Trainee Name</label>
+                                <input type="text" id="or_traineeName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="or_traineeBadge">Badge Number</label>
+                                <input type="text" id="or_traineeBadge" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="or_date">Date</label>
+                                <input type="date" id="or_date" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="or_shift">Shift</label>
+                                <select id="or_shift" required>
+                                    <option value="">Select Shift</option>
+                                    <option value="Day Shift">Day Shift</option>
+                                    <option value="Swing Shift">Swing Shift</option>
+                                    <option value="Night Shift">Night Shift</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Orientation Checklist</h3>
+                        <div class="checklist-grid">
+                            <div class="checklist-item">
+                                <label>Department tour completed</label>
+                                <div class="radio-group">
+                                    <label><input type="radio" name="or_tour" value="Yes" required> Yes</label>
+                                    <label><input type="radio" name="or_tour" value="No"> No</label>
+                                </div>
+                            </div>
+                            <div class="checklist-item">
+                                <label>Equipment issued and checked</label>
+                                <div class="radio-group">
+                                    <label><input type="radio" name="or_equipment" value="Yes" required> Yes</label>
+                                    <label><input type="radio" name="or_equipment" value="No"> No</label>
+                                </div>
+                            </div>
+                            <div class="checklist-item">
+                                <label>Vehicle inspection procedures</label>
+                                <div class="radio-group">
+                                    <label><input type="radio" name="or_vehicle" value="Yes" required> Yes</label>
+                                    <label><input type="radio" name="or_vehicle" value="No"> No</label>
+                                </div>
+                            </div>
+                            <div class="checklist-item">
+                                <label>Radio procedures and codes</label>
+                                <div class="radio-group">
+                                    <label><input type="radio" name="or_radio" value="Yes" required> Yes</label>
+                                    <label><input type="radio" name="or_radio" value="No"> No</label>
+                                </div>
+                            </div>
+                            <div class="checklist-item">
+                                <label>Report writing procedures</label>
+                                <div class="radio-group">
+                                    <label><input type="radio" name="or_reports" value="Yes" required> Yes</label>
+                                    <label><input type="radio" name="or_reports" value="No"> No</label>
+                                </div>
+                            </div>
+                            <div class="checklist-item">
+                                <label>Station procedures and policies</label>
+                                <div class="radio-group">
+                                    <label><input type="radio" name="or_policies" value="Yes" required> Yes</label>
+                                    <label><input type="radio" name="or_policies" value="No"> No</label>
+                                </div>
+                            </div>
+                            <div class="checklist-item">
+                                <label>Beat familiarization</label>
+                                <div class="radio-group">
+                                    <label><input type="radio" name="or_beat" value="Yes" required> Yes</label>
+                                    <label><input type="radio" name="or_beat" value="No"> No</label>
+                                </div>
+                            </div>
+                            <div class="checklist-item">
+                                <label>Introduction to supervisors</label>
+                                <div class="radio-group">
+                                    <label><input type="radio" name="or_supervisors" value="Yes" required> Yes</label>
+                                    <label><input type="radio" name="or_supervisors" value="No"> No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Comments</h3>
+                        <div class="form-group">
+                            <label for="or_comments">Additional Comments</label>
+                            <textarea id="or_comments" rows="4"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">Generate BBCode</button>
+                        <button type="button" class="btn-secondary" onclick="resetForm('orientationForm')">Clear Form</button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Daily Observation Report -->
+            <section id="daily-observation" class="page">
+                <div class="page-header">
+                    <h2>Daily Observation Report</h2>
+                    <p>Performance evaluation for patrol shift</p>
+                </div>
+                <form id="dailyObservationForm" class="report-form">
+                    <div class="form-section">
+                        <h3>Report Information</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="dor_traineeName">Trainee Name</label>
+                                <input type="text" id="dor_traineeName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="dor_traineeBadge">Badge Number</label>
+                                <input type="text" id="dor_traineeBadge" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="dor_date">Date</label>
+                                <input type="date" id="dor_date" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="dor_shift">Shift</label>
+                                <select id="dor_shift" required>
+                                    <option value="">Select Shift</option>
+                                    <option value="Day Shift">Day Shift</option>
+                                    <option value="Swing Shift">Swing Shift</option>
+                                    <option value="Night Shift">Night Shift</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Performance Categories</h3>
+                        <p class="rating-legend">Rating Scale: 1 (Unacceptable) - 4 (Superior) | N/O (Not Observed)</p>
+                        
+                        <div class="rating-table">
+                            <div class="rating-row rating-header">
+                                <div class="rating-category">Category</div>
+                                <div class="rating-scores">
+                                    <span>1</span>
+                                    <span>2</span>
+                                    <span>3</span>
+                                    <span>4</span>
+                                    <span>N/O</span>
+                                </div>
+                            </div>
+                            
+                            <div class="rating-row">
+                                <div class="rating-category">Appearance</div>
+                                <div class="rating-scores">
+                                    <label><input type="radio" name="dor_appearance" value="1" required></label>
+                                    <label><input type="radio" name="dor_appearance" value="2"></label>
+                                    <label><input type="radio" name="dor_appearance" value="3"></label>
+                                    <label><input type="radio" name="dor_appearance" value="4"></label>
+                                    <label><input type="radio" name="dor_appearance" value="N/O"></label>
+                                </div>
+                            </div>
+
+                            <div class="rating-row">
+                                <div class="rating-category">Attitude</div>
+                                <div class="rating-scores">
+                                    <label><input type="radio" name="dor_attitude" value="1" required></label>
+                                    <label><input type="radio" name="dor_attitude" value="2"></label>
+                                    <label><input type="radio" name="dor_attitude" value="3"></label>
+                                    <label><input type="radio" name="dor_attitude" value="4"></label>
+                                    <label><input type="radio" name="dor_attitude" value="N/O"></label>
+                                </div>
+                            </div>
+
+                            <div class="rating-row">
+                                <div class="rating-category">Knowledge of Department Policies</div>
+                                <div class="rating-scores">
+                                    <label><input type="radio" name="dor_policies" value="1" required></label>
+                                    <label><input type="radio" name="dor_policies" value="2"></label>
+                                    <label><input type="radio" name="dor_policies" value="3"></label>
+                                    <label><input type="radio" name="dor_policies" value="4"></label>
+                                    <label><input type="radio" name="dor_policies" value="N/O"></label>
+                                </div>
+                            </div>
+
+                            <div class="rating-row">
+                                <div class="rating-category">Knowledge of Penal Code</div>
+                                <div class="rating-scores">
+                                    <label><input type="radio" name="dor_penalcode" value="1" required></label>
+                                    <label><input type="radio" name="dor_penalcode" value="2"></label>
+                                    <label><input type="radio" name="dor_penalcode" value="3"></label>
+                                    <label><input type="radio" name="dor_penalcode" value="4"></label>
+                                    <label><input type="radio" name="dor_penalcode" value="N/O"></label>
+                                </div>
+                            </div>
+
+                            <div class="rating-row">
+                                <div class="rating-category">Report Writing</div>
+                                <div class="rating-scores">
+                                    <label><input type="radio" name="dor_reports" value="1" required></label>
+                                    <label><input type="radio" name="dor_reports" value="2"></label>
+                                    <label><input type="radio" name="dor_reports" value="3"></label>
+                                    <label><input type="radio" name="dor_reports" value="4"></label>
+                                    <label><input type="radio" name="dor_reports" value="N/O"></label>
+                                </div>
+                            </div>
+
+                            <div class="rating-row">
+                                <div class="rating-category">Radio Usage</div>
+                                <div class="rating-scores">
+                                    <label><input type="radio" name="dor_radio" value="1" required></label>
+                                    <label><input type="radio" name="dor_radio" value="2"></label>
+                                    <label><input type="radio" name="dor_radio" value="3"></label>
+                                    <label><input type="radio" name="dor_radio" value="4"></label>
+                                    <label><input type="radio" name="dor_radio" value="N/O"></label>
+                                </div>
+                            </div>
+
+                            <div class="rating-row">
+                                <div class="rating-category">Driving Skills</div>
+                                <div class="rating-scores">
+                                    <label><input type="radio" name="dor_driving" value="1" required></label>
+                                    <label><input type="radio" name="dor_driving" value="2"></label>
+                                    <label><input type="radio" name="dor_driving" value="3"></label>
+                                    <label><input type="radio" name="dor_driving" value="4"></label>
+                                    <label><input type="radio" name="dor_driving" value="N/O"></label>
+                                </div>
+                            </div>
+
+                            <div class="rating-row">
+                                <div class="rating-category">Officer Safety</div>
+                                <div class="rating-scores">
+                                    <label><input type="radio" name="dor_safety" value="1" required></label>
+                                    <label><input type="radio" name="dor_safety" value="2"></label>
+                                    <label><input type="radio" name="dor_safety" value="3"></label>
+                                    <label><input type="radio" name="dor_safety" value="4"></label>
+                                    <label><input type="radio" name="dor_safety" value="N/O"></label>
+                                </div>
+                            </div>
+
+                            <div class="rating-row">
+                                <div class="rating-category">Control of Conflict</div>
+                                <div class="rating-scores">
+                                    <label><input type="radio" name="dor_conflict" value="1" required></label>
+                                    <label><input type="radio" name="dor_conflict" value="2"></label>
+                                    <label><input type="radio" name="dor_conflict" value="3"></label>
+                                    <label><input type="radio" name="dor_conflict" value="4"></label>
+                                    <label><input type="radio" name="dor_conflict" value="N/O"></label>
+                                </div>
+                            </div>
+
+                            <div class="rating-row">
+                                <div class="rating-category">Problem Solving/Decision Making</div>
+                                <div class="rating-scores">
+                                    <label><input type="radio" name="dor_problemsolving" value="1" required></label>
+                                    <label><input type="radio" name="dor_problemsolving" value="2"></label>
+                                    <label><input type="radio" name="dor_problemsolving" value="3"></label>
+                                    <label><input type="radio" name="dor_problemsolving" value="4"></label>
+                                    <label><input type="radio" name="dor_problemsolving" value="N/O"></label>
+                                </div>
+                            </div>
+
+                            <div class="rating-row">
+                                <div class="rating-category">Investigative Skills</div>
+                                <div class="rating-scores">
+                                    <label><input type="radio" name="dor_investigation" value="1" required></label>
+                                    <label><input type="radio" name="dor_investigation" value="2"></label>
+                                    <label><input type="radio" name="dor_investigation" value="3"></label>
+                                    <label><input type="radio" name="dor_investigation" value="4"></label>
+                                    <label><input type="radio" name="dor_investigation" value="N/O"></label>
+                                </div>
+                            </div>
+
+                            <div class="rating-row">
+                                <div class="rating-category">Interview/Interrogation</div>
+                                <div class="rating-scores">
+                                    <label><input type="radio" name="dor_interview" value="1" required></label>
+                                    <label><input type="radio" name="dor_interview" value="2"></label>
+                                    <label><input type="radio" name="dor_interview" value="3"></label>
+                                    <label><input type="radio" name="dor_interview" value="4"></label>
+                                    <label><input type="radio" name="dor_interview" value="N/O"></label>
+                                </div>
+                            </div>
+
+                            <div class="rating-row">
+                                <div class="rating-category">Self-Initiated Activity</div>
+                                <div class="rating-scores">
+                                    <label><input type="radio" name="dor_initiative" value="1" required></label>
+                                    <label><input type="radio" name="dor_initiative" value="2"></label>
+                                    <label><input type="radio" name="dor_initiative" value="3"></label>
+                                    <label><input type="radio" name="dor_initiative" value="4"></label>
+                                    <label><input type="radio" name="dor_initiative" value="N/O"></label>
+                                </div>
+                            </div>
+
+                            <div class="rating-row">
+                                <div class="rating-category">Stress Response</div>
+                                <div class="rating-scores">
+                                    <label><input type="radio" name="dor_stress" value="1" required></label>
+                                    <label><input type="radio" name="dor_stress" value="2"></label>
+                                    <label><input type="radio" name="dor_stress" value="3"></label>
+                                    <label><input type="radio" name="dor_stress" value="4"></label>
+                                    <label><input type="radio" name="dor_stress" value="N/O"></label>
+                                </div>
+                            </div>
+
+                            <div class="rating-row">
+                                <div class="rating-category">Accepting/Following Instruction</div>
+                                <div class="rating-scores">
+                                    <label><input type="radio" name="dor_instruction" value="1" required></label>
+                                    <label><input type="radio" name="dor_instruction" value="2"></label>
+                                    <label><input type="radio" name="dor_instruction" value="3"></label>
+                                    <label><input type="radio" name="dor_instruction" value="4"></label>
+                                    <label><input type="radio" name="dor_instruction" value="N/O"></label>
+                                </div>
+                            </div>
+
+                            <div class="rating-row">
+                                <div class="rating-category">Community Relations</div>
+                                <div class="rating-scores">
+                                    <label><input type="radio" name="dor_community" value="1" required></label>
+                                    <label><input type="radio" name="dor_community" value="2"></label>
+                                    <label><input type="radio" name="dor_community" value="3"></label>
+                                    <label><input type="radio" name="dor_community" value="4"></label>
+                                    <label><input type="radio" name="dor_community" value="N/O"></label>
+                                </div>
+                            </div>
+
+                            <div class="rating-row">
+                                <div class="rating-category">Use of Proper Procedures</div>
+                                <div class="rating-scores">
+                                    <label><input type="radio" name="dor_procedures" value="1" required></label>
+                                    <label><input type="radio" name="dor_procedures" value="2"></label>
+                                    <label><input type="radio" name="dor_procedures" value="3"></label>
+                                    <label><input type="radio" name="dor_procedures" value="4"></label>
+                                    <label><input type="radio" name="dor_procedures" value="N/O"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Narrative</h3>
+                        <div class="form-group">
+                            <label for="dor_narrative">Performance Narrative</label>
+                            <textarea id="dor_narrative" rows="6" required placeholder="Detailed observations and comments about trainee performance..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">Generate BBCode</button>
+                        <button type="button" class="btn-secondary" onclick="resetForm('dailyObservationForm')">Clear Form</button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Employee Comment Sheet -->
+            <section id="employee-comment" class="page">
+                <div class="page-header">
+                    <h2>Employee Comment Sheet</h2>
+                    <p>Document specific incidents and observations</p>
+                </div>
+                <form id="employeeCommentForm" class="report-form">
+                    <div class="form-section">
+                        <h3>Report Information</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="ec_traineeName">Trainee Name</label>
+                                <input type="text" id="ec_traineeName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="ec_traineeBadge">Badge Number</label>
+                                <input type="text" id="ec_traineeBadge" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="ec_date">Date</label>
+                                <input type="date" id="ec_date" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="ec_time">Time</label>
+                                <input type="time" id="ec_time" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Incident Details</h3>
+                        <div class="form-group">
+                            <label for="ec_subject">Subject</label>
+                            <input type="text" id="ec_subject" required placeholder="Brief description of incident">
+                        </div>
+                        <div class="form-group">
+                            <label for="ec_description">Detailed Description</label>
+                            <textarea id="ec_description" rows="8" required placeholder="Detailed account of the incident, actions taken, and outcomes..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="ec_action">Corrective Action Taken</label>
+                            <textarea id="ec_action" rows="4" placeholder="Training provided, counseling given, etc..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">Generate BBCode</button>
+                        <button type="button" class="btn-secondary" onclick="resetForm('employeeCommentForm')">Clear Form</button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Weekly Evaluation Report -->
+            <section id="weekly-evaluation" class="page">
+                <div class="page-header">
+                    <h2>Weekly Evaluation Report</h2>
+                    <p>Comprehensive weekly performance summary</p>
+                </div>
+                <form id="weeklyEvaluationForm" class="report-form">
+                    <div class="form-section">
+                        <h3>Report Information</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="we_traineeName">Trainee Name</label>
+                                <input type="text" id="we_traineeName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="we_traineeBadge">Badge Number</label>
+                                <input type="text" id="we_traineeBadge" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="we_weekNumber">Week Number</label>
+                                <input type="number" id="we_weekNumber" min="1" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="we_dateRange">Date Range</label>
+                                <input type="text" id="we_dateRange" required placeholder="MM/DD/YYYY - MM/DD/YYYY">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Weekly Performance Summary</h3>
+                        <p class="rating-legend">Rating Scale: 1 (Unacceptable) - 4 (Superior) | N/O (Not Observed)</p>
+                        
+                        <div class="rating-table">
+                            <div class="rating-row rating-header">
+                                <div class="rating-category">Category</div>
+                                <div class="rating-scores">
+                                    <span>1</span>
+                                    <span>2</span>
+                                    <span>3</span>
+                                    <span>4</span>
+                                    <span>N/O</span>
+                                </div>
+                            </div>
+                            
+                            <div class="rating-row">
+                                <div class="rating-category">Appearance</div>
+                                <div class="rating-scores">
+                                    <label><input type="radio" name="we_appearance" value="1" required></label>
+                                    <label><input type="radio" name="we_appearance" value="2"></label>
+                                    <label><input type="radio" name="we_appearance" value="3"></label>
+                                    <label><input type="radio" name="we_appearance" value="4"></label>
+                                    <label><input type="radio" name="we_appearance" value="N/O"></label>
+                                </div>
+                            </div>
+
+                            <div class="rating-row">
+                                <div class="rating-category">Attitude</div>
+                                <div class="rating-scores">
+                                    <label><input type="radio" name="we_attitude" value="1" required></label>
+                                    <label><input type="radio" name="we_attitude" value="2"></label>
+                                    <label><input type="radio" name="we_attitude" value="3"></label>
+                                    <label><input type="radio" name="we_attitude" value="4"></label>
+                                    <label><input type="radio" name="we_attitude" value="N/O"></label>
+                                </div>
+                            </div>
+
+                            <div class="rating-row">
+                                <div class="rating-category">Knowledge of Department Policies</div>
+                                <div class="rating-scores">
+                                    <label><input type="radio" name="we_policies" value="1" required></label>
+                                    <label><input type="radio" name="we_policies" value="2"></label>
+                                    <label><input type="radio" name="we_policies" value="3"></label>
+                                    <label><input type="radio" name="we_policies" value="4"></label>
+                                    <label><input type="radio" name="we_policies" value="N/O"></label>
+                                </div>
+                            </div>
+
+                            <div class="rating-row">
+                                <div class="rating-category">Knowledge of Penal Code</div>
+                                <div class="rating-scores">
+                                    <label><input type="radio" name="we_penalcode" value="1" required></label>
+                                    <label><input type="radio" name="we_penalcode" value="2"></label>
+                                    <label><input type="radio" name="we_penalcode" value="3"></label>
+                                    <label><input type="radio" name="we_penalcode" value="4"></label>
+                                    <label><input type="radio" name="we_penalcode" value="N/O"></label>
+                                </div>
+                            </div>
+
+                            <div class="rating-row">
+                                <div class="rating-category">Report Writing</div>
+                                <div class="rating-scores">
+                                    <label><input type="radio" name="we_reports" value="1" required></label>
+                                    <label><input type="radio" name="we_reports" value="2"></label>
+                                    <label><input type="radio" name="we_reports" value="3"></label>
+                                    <label><input type="radio" name="we_reports" value="4"></label>
+                                    <label><input type="radio" name="we_reports" value="N/O"></label>
+                                </div>
+                            </div>
+
+                            <div class="rating-row">
+                                <div class="rating-category">Radio Usage</div>
+                                <div class="rating-scores">
+                                    <label><input type="radio" name="we_radio" value="1" required></label>
+                                    <label><input type="radio" name="we_radio" value="2"></label>
+                                    <label><input type="radio" name="we_radio" value="3"></label>
+                                    <label><input type="radio" name="we_radio" value="4"></label>
+                                    <label><input type="radio" name="we_radio" value="N/O"></label>
+                                </div>
+                            </div>
+
+                            <div class="rating-row">
+                                <div class="rating-category">Driving Skills</div>
+                                <div class="rating-scores">
+                                    <label><input type="radio" name="we_driving" value="1" required></label>
+                                    <label><input type="radio" name="we_driving" value="2"></label>
+                                    <label><input type="radio" name="we_driving" value="3"></label>
+                                    <label><input type="radio" name="we_driving" value="4"></label>
+                                    <label><input type="radio" name="we_driving" value="N/O"></label>
+                                </div>
+                            </div>
+
+                            <div class="rating-row">
+                                <div class="rating-category">Officer Safety</div>
+                                <div class="rating-scores">
+                                    <label><input type="radio" name="we_safety" value="1" required></label>
+                                    <label><input type="radio" name="we_safety" value="2"></label>
+                                    <label><input type="radio" name="we_safety" value="3"></label>
+                                    <label><input type="radio" name="we_safety" value="4"></label>
+                                    <label><input type="radio" name="we_safety" value="N/O"></label>
+                                </div>
+                            </div>
+
+                            <div class="rating-row">
+                                <div class="rating-category">Control of Conflict</div>
+                                <div class="rating-scores">
+                                    <label><input type="radio" name="we_conflict" value="1" required></label>
+                                    <label><input type="radio" name="we_conflict" value="2"></label>
+                                    <label><input type="radio" name="we_conflict" value="3"></label>
+                                    <label><input type="radio" name="we_conflict" value="4"></label>
+                                    <label><input type="radio" name="we_conflict" value="N/O"></label>
+                                </div>
+                            </div>
+
+                            <div class="rating-row">
+                                <div class="rating-category">Problem Solving/Decision Making</div>
+                                <div class="rating-scores">
+                                    <label><input type="radio" name="we_problemsolving" value="1" required></label>
+                                    <label><input type="radio" name="we_problemsolving" value="2"></label>
+                                    <label><input type="radio" name="we_problemsolving" value="3"></label>
+                                    <label><input type="radio" name="we_problemsolving" value="4"></label>
+                                    <label><input type="radio" name="we_problemsolving" value="N/O"></label>
+                                </div>
+                            </div>
+
+                            <div class="rating-row">
+                                <div class="rating-category">Investigative Skills</div>
+                                <div class="rating-scores">
+                                    <label><input type="radio" name="we_investigation" value="1" required></label>
+                                    <label><input type="radio" name="we_investigation" value="2"></label>
+                                    <label><input type="radio" name="we_investigation" value="3"></label>
+                                    <label><input type="radio" name="we_investigation" value="4"></label>
+                                    <label><input type="radio" name="we_investigation" value="N/O"></label>
+                                </div>
+                            </div>
+
+                            <div class="rating-row">
+                                <div class="rating-category">Interview/Interrogation</div>
+                                <div class="rating-scores">
+                                    <label><input type="radio" name="we_interview" value="1" required></label>
+                                    <label><input type="radio" name="we_interview" value="2"></label>
+                                    <label><input type="radio" name="we_interview" value="3"></label>
+                                    <label><input type="radio" name="we_interview" value="4"></label>
+                                    <label><input type="radio" name="we_interview" value="N/O"></label>
+                                </div>
+                            </div>
+
+                            <div class="rating-row">
+                                <div class="rating-category">Self-Initiated Activity</div>
+                                <div class="rating-scores">
+                                    <label><input type="radio" name="we_initiative" value="1" required></label>
+                                    <label><input type="radio" name="we_initiative" value="2"></label>
+                                    <label><input type="radio" name="we_initiative" value="3"></label>
+                                    <label><input type="radio" name="we_initiative" value="4"></label>
+                                    <label><input type="radio" name="we_initiative" value="N/O"></label>
+                                </div>
+                            </div>
+
+                            <div class="rating-row">
+                                <div class="rating-category">Stress Response</div>
+                                <div class="rating-scores">
+                                    <label><input type="radio" name="we_stress" value="1" required></label>
+                                    <label><input type="radio" name="we_stress" value="2"></label>
+                                    <label><input type="radio" name="we_stress" value="3"></label>
+                                    <label><input type="radio" name="we_stress" value="4"></label>
+                                    <label><input type="radio" name="we_stress" value="N/O"></label>
+                                </div>
+                            </div>
+
+                            <div class="rating-row">
+                                <div class="rating-category">Accepting/Following Instruction</div>
+                                <div class="rating-scores">
+                                    <label><input type="radio" name="we_instruction" value="1" required></label>
+                                    <label><input type="radio" name="we_instruction" value="2"></label>
+                                    <label><input type="radio" name="we_instruction" value="3"></label>
+                                    <label><input type="radio" name="we_instruction" value="4"></label>
+                                    <label><input type="radio" name="we_instruction" value="N/O"></label>
+                                </div>
+                            </div>
+
+                            <div class="rating-row">
+                                <div class="rating-category">Community Relations</div>
+                                <div class="rating-scores">
+                                    <label><input type="radio" name="we_community" value="1" required></label>
+                                    <label><input type="radio" name="we_community" value="2"></label>
+                                    <label><input type="radio" name="we_community" value="3"></label>
+                                    <label><input type="radio" name="we_community" value="4"></label>
+                                    <label><input type="radio" name="we_community" value="N/O"></label>
+                                </div>
+                            </div>
+
+                            <div class="rating-row">
+                                <div class="rating-category">Use of Proper Procedures</div>
+                                <div class="rating-scores">
+                                    <label><input type="radio" name="we_procedures" value="1" required></label>
+                                    <label><input type="radio" name="we_procedures" value="2"></label>
+                                    <label><input type="radio" name="we_procedures" value="3"></label>
+                                    <label><input type="radio" name="we_procedures" value="4"></label>
+                                    <label><input type="radio" name="we_procedures" value="N/O"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Weekly Summary</h3>
+                        <div class="form-group">
+                            <label for="we_strengths">Strengths Observed</label>
+                            <textarea id="we_strengths" rows="4" required placeholder="Key strengths demonstrated this week..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="we_improvements">Areas for Improvement</label>
+                            <textarea id="we_improvements" rows="4" required placeholder="Areas requiring additional training or focus..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="we_narrative">Overall Assessment</label>
+                            <textarea id="we_narrative" rows="6" required placeholder="Comprehensive weekly performance summary..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">Generate BBCode</button>
+                        <button type="button" class="btn-secondary" onclick="resetForm('weeklyEvaluationForm')">Clear Form</button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- FTP Completion Record -->
+            <section id="ftp-completion" class="page">
+                <div class="page-header">
+                    <h2>Field Training Program Completion Record</h2>
+                    <p>Final training certification document</p>
+                </div>
+                <form id="ftpCompletionForm" class="report-form">
+                    <div class="form-section">
+                        <h3>Trainee Information</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="ftp_traineeName">Trainee Name</label>
+                                <input type="text" id="ftp_traineeName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="ftp_traineeBadge">Badge Number</label>
+                                <input type="text" id="ftp_traineeBadge" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="ftp_startDate">Program Start Date</label>
+                                <input type="date" id="ftp_startDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="ftp_endDate">Program End Date</label>
+                                <input type="date" id="ftp_endDate" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Training Summary</h3>
+                        <div class="form-group">
+                            <label for="ftp_totalHours">Total Training Hours</label>
+                            <input type="number" id="ftp_totalHours" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="ftp_assignments">Training Assignments Completed</label>
+                            <textarea id="ftp_assignments" rows="6" required placeholder="List of all training assignments, scenarios, and evaluations completed..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Final Evaluation</h3>
+                        <div class="form-group">
+                            <label for="ftp_evaluation">Overall Performance Assessment</label>
+                            <textarea id="ftp_evaluation" rows="8" required placeholder="Comprehensive final evaluation of trainee performance..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="ftp_recommendation">Recommendation</label>
+                            <select id="ftp_recommendation" required>
+                                <option value="">Select Recommendation</option>
+                                <option value="Release from Training - Solo Patrol">Release from Training - Solo Patrol</option>
+                                <option value="Extended Training Required">Extended Training Required</option>
+                                <option value="Reassignment Recommended">Reassignment Recommended</option>
+                                <option value="Termination Recommended">Termination Recommended</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="ftp_comments">Additional Comments</label>
+                            <textarea id="ftp_comments" rows="4" placeholder="Any additional notes or recommendations..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>FTP Manager Approval</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="ftp_managerName">FTP Manager Name</label>
+                                <input type="text" id="ftp_managerName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="ftp_managerBadge">Manager Badge Number</label>
+                                <input type="text" id="ftp_managerBadge" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="ftp_approvalDate">Approval Date</label>
+                            <input type="date" id="ftp_approvalDate" required>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">Generate BBCode</button>
+                        <button type="button" class="btn-secondary" onclick="resetForm('ftpCompletionForm')">Clear Form</button>
+                    </div>
+                </form>
+            </section>
+        </main>
+    </div>
+
+    <!-- BBCode Output Modal -->
+    <div id="bbcodeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>BBCode Generated</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Copy the BBCode below:</p>
+                <textarea id="bbcodeOutput" readonly rows="15"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary" onclick="copyBBCode()">Copy to Clipboard</button>
+                <button class="btn-secondary" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
