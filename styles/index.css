@@ -834,4 +834,42 @@ body.background {
 
 #weeklyGenerator {
   width: 100%;
-  max-width: 1
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0;
+}
+
+/* Added specific styles for weekly report BBCode output */
+#weeklyBBCodeOutput {
+  width: calc(100% - 64px);
+  height: 300px;
+  resize: none;
+  padding: 12px;
+  margin: 16px 32px 32px;
+  border: 2px solid #1e3a5f;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  color: #e8e8e8;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+}
+
+#weeklyBBCodeOutput:focus {
+  outline: none;
+  border-color: #d4af37;
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+}
+
+/* Fixed weekly generator container styles */
+#weeklyGenerator .orientation-container {
+  margin-left: 0;
+  width: 100%;
+}
+
+#weeklyGenerator h2 {
+  text-align: center;
+  color: #d4af37;
+  margin: 24px 0 0;
+  padding: 0 32px;
+}
