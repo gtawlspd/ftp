@@ -26,6 +26,14 @@ window.addEventListener('DOMContentLoaded', () => {
 
   populateStaticOfficerInfo();
 
+  const setTodayDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   document.getElementById('orientationButton')?.addEventListener('click', e => {
     e.preventDefault();
     hideAllSections();
@@ -33,6 +41,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const serial = localStorage.getItem("serialNumber") || "";
     document.getElementById("oriFTO").value = name;
     document.getElementById("oriFTOSerial").value = serial;
+    document.getElementById("oriDate").value = setTodayDate();
     document.getElementById('orientationGenerator').style.display = 'block';
     document.getElementById('orientationGenerator').scrollIntoView({ behavior: 'smooth' });
   });
@@ -44,8 +53,21 @@ window.addEventListener('DOMContentLoaded', () => {
     const serial = localStorage.getItem("serialNumber") || "";
     document.getElementById("dorFTO").value = name;
     document.getElementById("dorFTOSerial").value = serial;
+    document.getElementById("dorDate").value = setTodayDate();
     document.getElementById('dorGenerator').style.display = 'block';
     document.getElementById('dorGenerator').scrollIntoView({ behavior: 'smooth' });
+  });
+
+  document.getElementById('weeklyReportLink')?.addEventListener('click', e => {
+    e.preventDefault();
+    hideAllSections();
+    const name = localStorage.getItem("officerName") || "";
+    const serial = localStorage.getItem("serialNumber") || "";
+    document.getElementById("weeklyFTM").value = name;
+    document.getElementById("weeklyFTMSerial").value = serial;
+    document.getElementById("weeklyDate").value = setTodayDate();
+    document.getElementById('weeklyGenerator').style.display = 'block';
+    document.getElementById('weeklyGenerator').scrollIntoView({ behavior: 'smooth' });
   });
 
   document.getElementById('weeklyReportButton')?.addEventListener('click', e => {
@@ -55,6 +77,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const serial = localStorage.getItem("serialNumber") || "";
     document.getElementById("weeklyFTM").value = name;
     document.getElementById("weeklyFTMSerial").value = serial;
+    document.getElementById("weeklyDate").value = setTodayDate();
     document.getElementById('weeklyGenerator').style.display = 'block';
     document.getElementById('weeklyGenerator').scrollIntoView({ behavior: 'smooth' });
   });
@@ -132,9 +155,7 @@ window.addEventListener('DOMContentLoaded', () => {
     container.style.display = this.value === 'Yes' ? 'block' : 'none';
   });
 
-document.getElementById("formButton")?.addEventListener("click", handleSidebarSaveEdit);
-
-
+  document.getElementById("formButton")?.addEventListener("click", handleSidebarSaveEdit);
 
   document.getElementById("orientationResetButton")?.addEventListener("click", resetOrientationForm);
   document.getElementById("dorResetButton")?.addEventListener("click", resetDORForm);
