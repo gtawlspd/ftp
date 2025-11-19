@@ -59,7 +59,7 @@ export function saveReport(type) {
       ratings: {}
     };
 
-     report.duration = report.data.duration;
+    report.duration = report.data.duration;
 
     for (let i = 1; i <= 8; i++) {
       const selected = document.querySelector(`input[name="oriRating${i}"]:checked`);
@@ -91,26 +91,26 @@ export function saveReport(type) {
       report.data.ratings[`dorRating${i}`] = selected ? selected.value : "";
     }
   
-    } else if (type === "ftofile") {
-  report.data = {
-    name: getValue("ftoFileName"),
-    serial: getValue("ftoFileSerial"),
-    division: getValue("ftoFileDivision"),
-    time: getValue("ftoFileTime"),
-    logs: [...monthlyLogs]
-  };
+  } else if (type === "ftofile") {
+    report.data = {
+      name: getValue("ftoFileName"),
+      serial: getValue("ftoFileSerial"),
+      division: getValue("ftoFileDivision"),
+      time: getValue("ftoFileTime"),
+      logs: [...monthlyLogs]
+    };
   
-  const date = new Date().toLocaleDateString('en-US');
-  report.title = `FTO File - ${report.data.name}`;
-  report.type = "ftofile";
-  localStorage.setItem("ftpTime", report.data.time);
+    const date = new Date().toLocaleDateString('en-US');
+    report.title = `FTO File - ${report.data.name}`;
+    report.type = "ftofile";
+    localStorage.setItem("ftpTime", report.data.time);
 
-  const allReports = JSON.parse(localStorage.getItem("savedReports") || "[]");
-  const filtered = allReports.filter(r => r.type !== "ftofile");
-  filtered.push(report); // Use updated `report.title`
-  localStorage.setItem("savedReports", JSON.stringify(filtered));
-  loadSavedReports();
-  return;
+    const allReports = JSON.parse(localStorage.getItem("savedReports") || "[]");
+    const filtered = allReports.filter(r => r.type !== "ftofile");
+    filtered.push(report); // Use updated `report.title`
+    localStorage.setItem("savedReports", JSON.stringify(filtered));
+    loadSavedReports();
+    return;
 }
 
   if (type === "weekly") {
@@ -150,11 +150,10 @@ if (type !== "weekly") {
 
 
   if (existingIndex >= 0) {
-  savedReports[existingIndex] = report;
-} else {
-  savedReports.push(report);
-}
-
+    savedReports[existingIndex] = report;
+  } else {
+    savedReports.push(report);
+  }
 }
 
 localStorage.setItem("savedReports", JSON.stringify(savedReports));
@@ -289,8 +288,10 @@ export function deleteReport(title) {
   const filtered = savedReports.filter(r => r.title !== title);
   localStorage.setItem("savedReports", JSON.stringify(filtered));
 
-  // Adjust FTP time if report has .time
-  if (reportToDelete?.data?.time) {
+  // Adjust FTP time if report has duration (for orientation/DOR) or data.time (for FTO file)
+  if (reportToDelete?.duration) {
+    subtractFromFtpTime(reportToDelete.duration);
+  } else if (reportToDelete?.data?.time) {
     subtractFromFtpTime(reportToDelete.data.time);
   }
 
