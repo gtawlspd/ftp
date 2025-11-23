@@ -17,6 +17,13 @@
  <body class="background">
   <div class="sidebar">
    <img alt="Sidebar Placeholder" class="sidebar-image" src="images/ftologo.png"/>
+   
+   <!-- Added GMT clock display -->
+   <div class="server-clock">
+     <div class="clock-time" id="gmtClock">00:00:00</div>
+     <div class="clock-label">(Current Server Time)</div>
+   </div>
+   
    <div class="officer-inputs">
     <form id="officerForm">
      <div id="nameAndSerial">
@@ -1765,5 +1772,7 @@
    </div>
   </div>
   <script type="module" src="script/main.js"></script>
- </body>
+    <!-- Add autosave module -->
+    <script type="module" src="script/utils/autosave.js"></script>
+  </body>
 </html>
