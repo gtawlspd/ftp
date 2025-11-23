@@ -1,26 +1,11 @@
-import { generateOrientationBBCode } from "./generators/orientation.js"
-import { generateDORBBCode } from "./generators/dor.js"
-import { generateWeeklyBBCode } from "./generators/weekly.js"
-
-import {
-  generateFTOFileBBCode,
-  setupMonthlyLogButton,
-  submitMonthlyLogSection,
-  getCurrentMonthYearLabel,
-} from "./generators/ftofile.js"
-
-import {
-  hideAllSections,
-  populateStaticOfficerInfo,
-  setupDropdowns,
-  resetOrientationForm,
-  resetDORForm,
-  resetWeeklyForm,
-} from "./utils/ui.js"
-
+import { generateCanineDeploymentBBCode } from "./generators/canine-deployment.js"
+import { generateCanineBiteBBCode } from "./generators/canine-bite.js"
+import { generateCanineSearchBBCode } from "./generators/canine-search.js"
+import { generateMetroDeploymentBBCode } from "./generators/metro-deployment.js"
+import { generatePatrolReportBBCode } from "./generators/patrol-report.js"
+import { hideAllSections, populateStaticHandlerInfo, setupDropdowns } from "./utils/ui.js"
 import { loadSavedReports } from "./utils/localstorage.js"
-
-import { checkAndPromptRestore, clearAutoSave, undo, redo, markFormAsCleared } from "./utils/autosave.js"
+import { loadDeploymentTypes } from "./utils/deployment-types.js"
 
 function updateGMTClock() {
   const now = new Date()
@@ -37,310 +22,261 @@ function updateGMTClock() {
 updateGMTClock()
 setInterval(updateGMTClock, 1000)
 
-window.addEventListener("keydown", (e) => {
-  // CTRL+Z or CMD+Z for undo
-  if ((e.ctrlKey || e.metaKey) && e.key === "z" && !e.shiftKey) {
-    e.preventDefault()
-    const activeForm = getActiveFormType()
-    if (activeForm) {
-      undo(activeForm)
-    }
-  }
-  // CTRL+SHIFT+Z or CTRL+Y for redo
-  else if ((e.ctrlKey || e.metaKey) && ((e.shiftKey && e.key === "z") || e.key === "y")) {
-    e.preventDefault()
-    const activeForm = getActiveFormType()
-    if (activeForm) {
-      redo(activeForm)
-    }
-  }
-})
+const setTodayDate = () => {
+  const today = new Date()
+  const year = today.getFullYear()
+  const month = String(today.getMonth() + 1).padStart(2, "0")
+  const day = String(today.getDate()).padStart(2, "0")
+  return `${year}-${month}-${day}`
+}
 
-function getActiveFormType() {
-  if (document.getElementById("orientationGenerator").style.display !== "none") {
-    return "orientation"
-  } else if (document.getElementById("dorGenerator").style.display !== "none") {
-    return "dor"
-  } else if (document.getElementById("weeklyGenerator").style.display !== "none") {
-    return "weekly"
-  } else if (document.getElementById("ftoFileGenerator").style.display !== "none") {
-    return "ftofile"
-  }
-  return null
+export function formatDateForBBCode(dateStr) {
+  const date = new Date(dateStr)
+  const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]
+  const day = String(date.getDate()).padStart(2, "0")
+  const month = months[date.getMonth()]
+  const year = date.getFullYear()
+  return `${day}/${month}/${year}`
+}
+
+function calculateK9Number(badgeNumber) {
+  if (!badgeNumber) return ""
+  const badgeStr = badgeNumber.toString()
+  const lastThree = badgeStr.slice(-3).padStart(3, "0")
+  return lastThree
 }
 
 window.addEventListener("DOMContentLoaded", () => {
   setupDropdowns()
   loadSavedReports()
+  loadDeploymentTypes()
+  populateStaticHandlerInfo()
+  initializeSettingsToggle()
 
-  populateStaticOfficerInfo()
-
-  const setTodayDate = () => {
-    const today = new Date()
-    const year = today.getFullYear()
-    const month = String(today.getMonth() + 1).padStart(2, "0")
-    const day = String(today.getDate()).padStart(2, "0")
-    return `${year}-${month}-${day}`
-  }
-
-  document.getElementById("orientationButton")?.addEventListener("click", (e) => {
+  document.getElementById("canineDeploymentButton")?.addEventListener("click", (e) => {
     e.preventDefault()
     hideAllSections()
-    const name = localStorage.getItem("officerName") || ""
-    const serial = localStorage.getItem("serialNumber") || ""
-    document.getElementById("oriFTO").value = name
-    document.getElementById("oriFTOSerial").value = serial
-    document.getElementById("oriDate").value = setTodayDate()
-    document.getElementById("orientationGenerator").style.display = "block"
-    document.getElementById("orientationGenerator").scrollIntoView({ behavior: "smooth" })
-    checkAndPromptRestore("orientation")
+    document.getElementById("cdDate").value = setTodayDate()
+    document.getElementById("canineDeploymentGenerator").style.display = "block"
+    document.getElementById("canineDeploymentGenerator").scrollIntoView({ behavior: "smooth" })
   })
 
-  document.getElementById("dorButton")?.addEventListener("click", (e) => {
+  document.getElementById("canineBiteButton")?.addEventListener("click", (e) => {
     e.preventDefault()
     hideAllSections()
-    const name = localStorage.getItem("officerName") || ""
-    const serial = localStorage.getItem("serialNumber") || ""
-    document.getElementById("dorFTO").value = name
-    document.getElementById("dorFTOSerial").value = serial
-    document.getElementById("dorDate").value = setTodayDate()
-    document.getElementById("dorGenerator").style.display = "block"
-    document.getElementById("dorGenerator").scrollIntoView({ behavior: "smooth" })
-    checkAndPromptRestore("dor")
+    document.getElementById("cbDate").value = setTodayDate()
+    document.getElementById("canineBiteGenerator").style.display = "block"
+    document.getElementById("canineBiteGenerator").scrollIntoView({ behavior: "smooth" })
   })
 
-  document.getElementById("weeklyReportLink")?.addEventListener("click", (e) => {
+  document.getElementById("canineSearchButton")?.addEventListener("click", (e) => {
     e.preventDefault()
     hideAllSections()
-    const name = localStorage.getItem("officerName") || ""
-    const serial = localStorage.getItem("serialNumber") || ""
-    document.getElementById("weeklyFTM").value = name
-    document.getElementById("weeklyFTMSerial").value = serial
-    document.getElementById("weeklyDate").value = setTodayDate()
-    document.getElementById("weeklyGenerator").style.display = "block"
-    document.getElementById("weeklyGenerator").scrollIntoView({ behavior: "smooth" })
-    checkAndPromptRestore("weekly")
+    document.getElementById("csDate").value = setTodayDate()
+    document.getElementById("canineSearchGenerator").style.display = "block"
+    document.getElementById("canineSearchGenerator").scrollIntoView({ behavior: "smooth" })
   })
 
-  document.getElementById("weeklyReportButton")?.addEventListener("click", (e) => {
+  document.getElementById("metroDeploymentButton")?.addEventListener("click", (e) => {
     e.preventDefault()
     hideAllSections()
-    const name = localStorage.getItem("officerName") || ""
-    const serial = localStorage.getItem("serialNumber") || ""
-    document.getElementById("weeklyFTM").value = name
-    document.getElementById("weeklyFTMSerial").value = serial
-    document.getElementById("weeklyDate").value = setTodayDate()
-    document.getElementById("weeklyGenerator").style.display = "block"
-    document.getElementById("weeklyGenerator").scrollIntoView({ behavior: "smooth" })
-    checkAndPromptRestore("weekly")
+    document.getElementById("mdDate").value = setTodayDate()
+    document.getElementById("metroDeploymentGenerator").style.display = "block"
+    document.getElementById("metroDeploymentGenerator").scrollIntoView({ behavior: "smooth" })
   })
 
-  document.getElementById("ftoFileButton")?.addEventListener("click", (e) => {
+  document.getElementById("patrolReportButton")?.addEventListener("click", (e) => {
     e.preventDefault()
     hideAllSections()
-    const container = document.getElementById("monthlyLogInputsContainer")
-    container.innerHTML = ""
-
-    const label = document.createElement("h2")
-    label.style.color = "white"
-    label.style.textAlign = "center"
-    label.style.marginBottom = "10px"
-    label.id = "monthlyLogLabel"
-    label.textContent = getCurrentMonthYearLabel()
-    container.appendChild(label)
-
-    setupMonthlyLogButton()
-
-    document.getElementById("ftoFileName").value = localStorage.getItem("officerName") || ""
-    document.getElementById("ftoFileSerial").value = localStorage.getItem("serialNumber") || ""
-    document.getElementById("ftoFileTime").value = localStorage.getItem("ftpTime") || "00:00"
-    document.getElementById("ftoFileDivision").value = "MISSION ROW/METRO"
-    document.getElementById("ftoFileGenerator").style.display = "block"
-    document.getElementById("ftoFileGenerator").scrollIntoView({ behavior: "smooth" })
-
-    checkAndPromptRestore("ftofile")
+    document.getElementById("prDate").value = setTodayDate()
+    document.getElementById("patrolReportGenerator").style.display = "block"
+    document.getElementById("patrolReportGenerator").scrollIntoView({ behavior: "smooth" })
   })
 
-  document.getElementById("newOrientationReport")?.addEventListener("click", () => {
-    const form = document.getElementById("orientationForm")
-    const inputs = form.querySelectorAll('input[type="text"], textarea')
-    inputs.forEach((input) => {
-      if (input.id !== "oriFTO" && input.id !== "oriFTOSerial" && input.id !== "oriDate") {
-        input.value = ""
-      }
-    })
-    form.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach((input) => {
-      input.checked = false
-    })
-    markFormAsCleared("orientation")
-    const name = localStorage.getItem("officerName") || ""
-    const serial = localStorage.getItem("serialNumber") || ""
-    document.getElementById("oriFTO").value = name
-    document.getElementById("oriFTOSerial").value = serial
-    document.getElementById("oriDate").value = setTodayDate()
-  })
-
-  document.getElementById("newDORReport")?.addEventListener("click", () => {
-    const form = document.getElementById("dorForm")
-    const inputs = form.querySelectorAll('input[type="text"], textarea')
-    inputs.forEach((input) => {
-      if (input.id !== "dorFTO" && input.id !== "dorFTOSerial" && input.id !== "dorDate") {
-        input.value = ""
-      }
-    })
-    form.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach((input) => {
-      input.checked = false
-    })
-    markFormAsCleared("dor")
-    const name = localStorage.getItem("officerName") || ""
-    const serial = localStorage.getItem("serialNumber") || ""
-    document.getElementById("dorFTO").value = name
-    document.getElementById("dorFTOSerial").value = serial
-    document.getElementById("dorDate").value = setTodayDate()
-  })
-
-  document.getElementById("newWeeklyReport")?.addEventListener("click", () => {
-    const form = document.getElementById("weeklyForm")
-    const inputs = form.querySelectorAll('input[type="text"], textarea')
-    inputs.forEach((input) => {
-      if (input.id !== "weeklyFTM" && input.id !== "weeklyFTMSerial" && input.id !== "weeklyDate") {
-        input.value = ""
-      }
-    })
-    form.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach((input) => {
-      input.checked = false
-    })
-    markFormAsCleared("weekly")
-    const name = localStorage.getItem("officerName") || ""
-    const serial = localStorage.getItem("serialNumber") || ""
-    document.getElementById("weeklyFTM").value = name
-    document.getElementById("weeklyFTMSerial").value = serial
-    document.getElementById("weeklyDate").value = setTodayDate()
-  })
-
-  document.getElementById("newFTOFileReport")?.addEventListener("click", () => {
-    const form = document.getElementById("ftofileForm")
-    const inputs = form.querySelectorAll('input[type="text"], textarea')
-    inputs.forEach((input) => {
-      if (
-        input.id !== "ftoFileName" &&
-        input.id !== "ftoFileSerial" &&
-        input.id !== "ftoFileTime" &&
-        input.id !== "ftoFileDivision"
-      ) {
-        input.value = ""
-      }
-    })
-    form.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach((input) => {
-      input.checked = false
-    })
-    markFormAsCleared("ftofile")
-    document.getElementById("ftoFileName").value = localStorage.getItem("officerName") || ""
-    document.getElementById("ftoFileSerial").value = localStorage.getItem("serialNumber") || ""
-    document.getElementById("ftoFileTime").value = localStorage.getItem("ftpTime") || "00:00"
-    document.getElementById("ftoFileDivision").value = "MISSION ROW/METRO"
-  })
-
-  document.getElementById("backButton")?.addEventListener("click", () => {
-    hideAllSections()
-    document.getElementById("mainContent").style.display = "block"
-  })
-  document.getElementById("dorBackButton")?.addEventListener("click", () => {
-    hideAllSections()
-    document.getElementById("mainContent").style.display = "block"
-  })
-  document.getElementById("weeklyBackButton")?.addEventListener("click", () => {
-    hideAllSections()
-    document.getElementById("mainContent").style.display = "block"
-  })
-  document.getElementById("ftoFileBackButton")?.addEventListener("click", () => {
+  document.getElementById("canineDeploymentBackButton")?.addEventListener("click", () => {
     hideAllSections()
     document.getElementById("mainContent").style.display = "block"
   })
 
-  document.getElementById("OrientationGenerateButton")?.addEventListener("click", (e) => {
-    e.preventDefault()
-    generateOrientationBBCode()
-    document.getElementById("oriBBCodeOutput")?.scrollIntoView({ behavior: "smooth" })
-    clearAutoSave("orientation")
+  document.getElementById("canineBiteBackButton")?.addEventListener("click", () => {
+    hideAllSections()
+    document.getElementById("mainContent").style.display = "block"
   })
 
-  document.getElementById("DORGenerateButton")?.addEventListener("click", (e) => {
-    e.preventDefault()
-    generateDORBBCode()
-    document.getElementById("dorBBCodeOutput")?.scrollIntoView({ behavior: "smooth" })
-    clearAutoSave("dor")
+  document.getElementById("canineSearchBackButton")?.addEventListener("click", () => {
+    hideAllSections()
+    document.getElementById("mainContent").style.display = "block"
   })
 
-  document.getElementById("generateWeekly")?.addEventListener("click", (e) => {
-    e.preventDefault()
-    generateWeeklyBBCode()
-    document.getElementById("weeklyBBCodeOutput")?.scrollIntoView({ behavior: "smooth" })
-    clearAutoSave("weekly")
+  document.getElementById("metroDeploymentBackButton")?.addEventListener("click", () => {
+    hideAllSections()
+    document.getElementById("mainContent").style.display = "block"
   })
 
-  document.getElementById("generateFTOFile")?.addEventListener("click", (e) => {
-    e.preventDefault()
-    generateFTOFileBBCode()
-    document.getElementById("ftoFileBBCodeOutput")?.scrollIntoView({ behavior: "smooth" })
-    document.getElementById("submitMonthlyLogs")?.addEventListener("click", submitMonthlyLogSection)
-    clearAutoSave("ftofile")
+  document.getElementById("patrolReportBackButton")?.addEventListener("click", () => {
+    hideAllSections()
+    document.getElementById("mainContent").style.display = "block"
   })
 
-  document.getElementById("remedialRequired")?.addEventListener("change", function () {
-    const container = document.getElementById("remedialDetailsContainer")
-    container.style.display = this.value === "Yes" ? "block" : "none"
+  document.getElementById("generateCanineDeployment")?.addEventListener("click", (e) => {
+    e.preventDefault()
+    generateCanineDeploymentBBCode()
+    document.getElementById("cdBBCodeOutput")?.scrollIntoView({ behavior: "smooth" })
+  })
+
+  document.getElementById("generateCanineBite")?.addEventListener("click", (e) => {
+    e.preventDefault()
+    generateCanineBiteBBCode()
+    document.getElementById("cbBBCodeOutput")?.scrollIntoView({ behavior: "smooth" })
+  })
+
+  document.getElementById("generateCanineSearch")?.addEventListener("click", (e) => {
+    e.preventDefault()
+    generateCanineSearchBBCode()
+    document.getElementById("csBBCodeOutput")?.scrollIntoView({ behavior: "smooth" })
+  })
+
+  document.getElementById("generateMetroDeployment")?.addEventListener("click", (e) => {
+    e.preventDefault()
+    generateMetroDeploymentBBCode()
+    document.getElementById("mdBBCodeOutput")?.scrollIntoView({ behavior: "smooth" })
+  })
+
+  document.getElementById("generatePatrolReport")?.addEventListener("click", (e) => {
+    e.preventDefault()
+    generatePatrolReportBBCode()
+    document.getElementById("prBBCodeOutput")?.scrollIntoView({ behavior: "smooth" })
+  })
+
+  document.getElementById("newCanineDeployment")?.addEventListener("click", () => {
+    document.getElementById("canineDeploymentForm").reset()
+    document.getElementById("cdDate").value = setTodayDate()
+  })
+
+  document.getElementById("newCanineBite")?.addEventListener("click", () => {
+    document.getElementById("canineBiteForm").reset()
+    document.getElementById("cbDate").value = setTodayDate()
+  })
+
+  document.getElementById("newCanineSearch")?.addEventListener("click", () => {
+    document.getElementById("canineSearchForm").reset()
+    document.getElementById("csDate").value = setTodayDate()
+  })
+
+  document.getElementById("newMetroDeployment")?.addEventListener("click", () => {
+    document.getElementById("metroDeploymentForm").reset()
+    document.getElementById("mdDate").value = setTodayDate()
+  })
+
+  document.getElementById("newPatrolReport")?.addEventListener("click", () => {
+    document.getElementById("patrolReportForm").reset()
+    document.getElementById("prDate").value = setTodayDate()
   })
 
   document.getElementById("formButton")?.addEventListener("click", handleSidebarSaveEdit)
-
-  document.getElementById("orientationResetButton")?.addEventListener("click", resetOrientationForm)
-  document.getElementById("dorResetButton")?.addEventListener("click", resetDORForm)
-  document.getElementById("weeklyResetButton")?.addEventListener("click", resetWeeklyForm)
-
-  document.getElementById("submitMonthlyLogs")?.addEventListener("click", submitMonthlyLogSection)
 })
+
+function initializeSettingsToggle() {
+  const settingsToggleBtn = document.getElementById("settingsToggleBtn")
+  const settingsSection = document.querySelector(".settings-section")
+  const sidebar = document.getElementById("sidebar")
+  const body = document.body
+
+  settingsToggleBtn?.addEventListener("click", () => {
+    const isCollapsed = settingsSection.classList.contains("collapsed")
+
+    if (isCollapsed) {
+      // Expand settings
+      settingsSection.classList.remove("collapsed")
+    } else {
+      // Collapse settings
+      settingsSection.classList.add("collapsed")
+    }
+  })
+}
 
 export function handleSidebarSaveEdit(e) {
   e.preventDefault()
   const form = document.getElementById("officerForm")
   const button = document.getElementById("formButton")
+  const settingsSection = document.querySelector(".settings-section")
 
-  if (button.textContent === "SAVE") {
-    const name = document.getElementById("officerName").value
-    const serial = document.getElementById("serialNumber").value
-    const time = document.getElementById("ftpTime").value
-    const url = document.getElementById("ftoUrl").value
+  if (button.textContent === "SUBMIT") {
+    const handlerName = document.getElementById("handlerName").value
+    const badgeNumber = document.getElementById("badgeNumber").value
+    const k9Name = document.getElementById("k9Name").value
+    const k9Specialization = document.getElementById("k9Specialization").value
+    const divisionalRank = document.getElementById("divisionalRank").value
+    const signatureUrl = document.getElementById("signatureUrl").value
 
-    localStorage.setItem("officerName", name)
-    localStorage.setItem("serialNumber", serial)
-    localStorage.setItem("ftpTime", time)
-    localStorage.setItem("ftoUrl", url)
+    const k9Number = calculateK9Number(badgeNumber)
 
-    form.innerHTML = `
-  <div id="nameAndSerial">
-    <span id="officerNameStatic" class="static-text">${name}</span><br>
-    <span id="serialNumberStatic" class="static-text">#${serial}</span><br>
-    <span id="ftpTimeStatic" class="static-text">FTP Time: ${time}</span><br>
-    <a href="${url}" class="static-text" target="_blank" style="color:#0094FF;">FTO FILE</a>
-  </div>
-  <button id="formButton" type="submit">EDIT</button>
-`
-  } else {
-    const name = localStorage.getItem("officerName") || ""
-    const serial = localStorage.getItem("serialNumber") || ""
-    const time = localStorage.getItem("ftpTime") || ""
-    const url = localStorage.getItem("ftoUrl") || ""
+    localStorage.setItem("handlerName", handlerName)
+    localStorage.setItem("badgeNumber", badgeNumber)
+    localStorage.setItem("k9Name", k9Name)
+    localStorage.setItem("k9Number", k9Number)
+    localStorage.setItem("k9Specialization", k9Specialization)
+    localStorage.setItem("divisionalRank", divisionalRank)
+
+    if (signatureUrl) {
+      localStorage.setItem("signatureImage", signatureUrl)
+    }
 
     form.innerHTML = `
       <div id="nameAndSerial">
-        <input id="officerName" type="text" placeholder="Officer Name" value="${name}" />
-        <input id="serialNumber" type="text" placeholder="Serial Number" value="${serial}" />
+        <span class="static-text">${handlerName}</span><br>
+        <span id="serialNumberStatic" class="static-text">#${badgeNumber}</span><br>
+        <span class="static-text">K9: ${k9Name} (#${k9Number})</span><br>
+        <span class="static-text">${k9Specialization}</span><br>
+        <span class="static-text">${divisionalRank}</span>
       </div>
-      <input id="ftpTime" type="text" placeholder="Total FTP Time (HH:MM)" value="${time}" />
-      <input id="ftoUrl" type="url" placeholder="FTO File URL" value="${url}" />
-      <button id="formButton" type="submit">SAVE</button>
+      <button id="formButton" type="submit">EDIT</button>
     `
+
+    setTimeout(() => {
+      settingsSection.classList.add("collapsed")
+    }, 500)
+  } else {
+    const handlerName = localStorage.getItem("handlerName") || ""
+    const badgeNumber = localStorage.getItem("badgeNumber") || ""
+    const k9Name = localStorage.getItem("k9Name") || ""
+    const k9Specialization = localStorage.getItem("k9Specialization") || ""
+    const divisionalRank = localStorage.getItem("divisionalRank") || ""
+    const signatureUrl = localStorage.getItem("signatureImage") || ""
+
+    const k9Number = calculateK9Number(badgeNumber)
+
+    form.innerHTML = `
+      <div id="nameAndSerial">
+        <input id="handlerName" type="text" placeholder="Handler Name" value="${handlerName}" />
+        <input id="badgeNumber" type="text" placeholder="Badge Number" value="${badgeNumber}" />
+        <input id="k9Name" type="text" placeholder="K9 Name" value="${k9Name}" />
+        <input id="k9Number" type="text" placeholder="K9 Number (auto)" value="${k9Number}" readonly />
+        <input id="k9Specialization" type="text" placeholder="K9 Specialization" value="${k9Specialization}" list="k9SpecializationList" />
+        <datalist id="k9SpecializationList">
+          <option value="FIREARMS">
+          <option value="NARCOTICS">
+          <option value="EXPLOSIVES">
+          <option value="DUAL PURPOSE">
+        </datalist>
+        <input id="divisionalRank" type="text" placeholder="Divisional Rank" value="${divisionalRank}" />
+      </div>
+      <label for="signatureUrl" class="signature-label">Signature Image URL (.png)</label>
+      <input id="signatureUrl" type="url" placeholder="https://i.imgur.com/example.png" value="${signatureUrl}" />
+      <button id="formButton" type="submit">SUBMIT</button>
+    `
+
+    setTimeout(() => {
+      const badgeInput = document.getElementById("badgeNumber")
+      const k9NumberInput = document.getElementById("k9Number")
+
+      badgeInput?.addEventListener("input", (e) => {
+        const newK9Number = calculateK9Number(e.target.value)
+        if (k9NumberInput) {
+          k9NumberInput.value = newK9Number
+        }
+      })
+    }, 0)
   }
 
   setTimeout(() => {
