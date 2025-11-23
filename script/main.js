@@ -20,7 +20,7 @@ import {
 
 import { loadSavedReports } from "./utils/localstorage.js"
 
-import { checkAndPromptRestore, clearAutoSave, undo, redo } from "./utils/autosave.js"
+import { checkAndPromptRestore, clearAutoSave, undo, redo, markFormAsCleared } from "./utils/autosave.js"
 
 function updateGMTClock() {
   const now = new Date()
@@ -159,6 +159,45 @@ window.addEventListener("DOMContentLoaded", () => {
     document.getElementById("ftoFileGenerator").scrollIntoView({ behavior: "smooth" })
 
     checkAndPromptRestore("ftofile")
+  })
+
+  document.getElementById("newOrientationReport")?.addEventListener("click", () => {
+    document.getElementById("orientationForm").reset()
+    markFormAsCleared("orientation")
+    const name = localStorage.getItem("officerName") || ""
+    const serial = localStorage.getItem("serialNumber") || ""
+    document.getElementById("oriFTO").value = name
+    document.getElementById("oriFTOSerial").value = serial
+    document.getElementById("oriDate").value = setTodayDate()
+  })
+
+  document.getElementById("newDORReport")?.addEventListener("click", () => {
+    document.getElementById("dorForm").reset()
+    markFormAsCleared("dor")
+    const name = localStorage.getItem("officerName") || ""
+    const serial = localStorage.getItem("serialNumber") || ""
+    document.getElementById("dorFTO").value = name
+    document.getElementById("dorFTOSerial").value = serial
+    document.getElementById("dorDate").value = setTodayDate()
+  })
+
+  document.getElementById("newWeeklyReport")?.addEventListener("click", () => {
+    document.getElementById("weeklyForm").reset()
+    markFormAsCleared("weekly")
+    const name = localStorage.getItem("officerName") || ""
+    const serial = localStorage.getItem("serialNumber") || ""
+    document.getElementById("weeklyFTM").value = name
+    document.getElementById("weeklyFTMSerial").value = serial
+    document.getElementById("weeklyDate").value = setTodayDate()
+  })
+
+  document.getElementById("newFTOFileReport")?.addEventListener("click", () => {
+    document.getElementById("ftofileForm").reset()
+    markFormAsCleared("ftofile")
+    document.getElementById("ftoFileName").value = localStorage.getItem("officerName") || ""
+    document.getElementById("ftoFileSerial").value = localStorage.getItem("serialNumber") || ""
+    document.getElementById("ftoFileTime").value = localStorage.getItem("ftpTime") || "00:00"
+    document.getElementById("ftoFileDivision").value = "MISSION ROW/METRO"
   })
 
   document.getElementById("backButton")?.addEventListener("click", () => {
