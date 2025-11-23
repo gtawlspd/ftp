@@ -1,6 +1,7 @@
 // Auto-save configuration
 const AUTOSAVE_DELAY = 1000 // 1 second after typing stops
 const UNDO_HISTORY_LIMIT = 50 // Maximum undo states to keep
+const DELETE_CONFIRMATION_DELAY = 3000 // 3 seconds to wait before confirming manual deletion
 
 // Undo history storage
 const undoHistory = {
@@ -19,6 +20,28 @@ const undoPointer = {
 
 // Auto-save timers
 const autosaveTimers = {}
+const deleteConfirmationTimers = {}
+
+const manualClearFlags = {
+  orientation: false,
+  dor: false,
+  weekly: false,
+  ftofile: false,
+}
+
+const lastContentState = {
+  orientation: null,
+  dor: null,
+  weekly: null,
+  ftofile: null,
+}
+
+const PREFILLED_FIELDS = {
+  orientation: ["oriFTO", "oriFTOSerial", "oriDate"],
+  dor: ["dorFTO", "dorFTOSerial", "dorDate"],
+  weekly: ["weeklyDate", "weeklyFTM", "weeklyFTMSerial"],
+  ftofile: ["ftoFileName", "ftoFileSerial", "ftoFileTime"],
+}
 
 /**
  * Save current form state to localStorage for crash recovery
@@ -27,6 +50,7 @@ export function autoSaveFormState(formType) {
   const state = captureFormState(formType)
   if (state) {
     localStorage.setItem(`autosave_${formType}`, JSON.stringify(state))
+    lastContentState[formType] = JSON.stringify(state.data)
   }
 }
 
@@ -50,6 +74,15 @@ export function loadAutoSavedState(formType) {
  */
 export function clearAutoSave(formType) {
   localStorage.removeItem(`autosave_${formType}`)
+  manualClearFlags[formType] = false
+  lastContentState[formType] = null
+}
+
+export function markFormAsCleared(formType) {
+  manualClearFlags[formType] = true
+  clearAutoSave(formType)
+  undoHistory[formType] = []
+  undoPointer[formType] = -1
 }
 
 /**
@@ -139,10 +172,10 @@ export function restoreFormState(state) {
   if (formType === "orientation") {
     document.getElementById("oriOfficer").value = data.officer
     document.getElementById("oriOfficerSerial").value = data.officerSerial
-    document.getElementById("oriFTO").value = data.fto
-    document.getElementById("oriFTOSerial").value = data.ftoSerial
+    // document.getElementById("oriFTO").value = data.fto
+    // document.getElementById("oriFTOSerial").value = data.ftoSerial
     document.getElementById("oriPatrolNumber").value = data.patrol
-    document.getElementById("oriDate").value = data.date
+    // document.getElementById("oriDate").value = data.date
     document.getElementById("oriTime").value = data.time
     document.getElementById("oriDuration").value = data.duration
     document.getElementById("oriIncidentsTasks").value = data.incidents
@@ -156,10 +189,10 @@ export function restoreFormState(state) {
   } else if (formType === "dor") {
     document.getElementById("dorOfficer").value = data.officer
     document.getElementById("dorOfficerSerial").value = data.officerSerial
-    document.getElementById("dorFTO").value = data.fto
-    document.getElementById("dorFTOSerial").value = data.ftoSerial
+    // document.getElementById("dorFTO").value = data.fto
+    // document.getElementById("dorFTOSerial").value = data.ftoSerial
     document.getElementById("dorPatrolNumber").value = data.patrol
-    document.getElementById("dorDate").value = data.date
+    // document.getElementById("dorDate").value = data.date
     document.getElementById("dorTime").value = data.time
     document.getElementById("dorDuration").value = data.duration
     document.getElementById("dorIncidentsTasks").value = data.incidents
@@ -177,9 +210,9 @@ export function restoreFormState(state) {
   } else if (formType === "weekly") {
     document.getElementById("weeklyOfficer").value = data.officer
     document.getElementById("weeklyOfficerSerial").value = data.officerSerial
-    document.getElementById("weeklyDate").value = data.date
-    document.getElementById("weeklyFTM").value = data.ftm
-    document.getElementById("weeklyFTMSerial").value = data.ftmSerial
+    // document.getElementById("weeklyDate").value = data.date
+    // document.getElementById("weeklyFTM").value = data.ftm
+    // document.getElementById("weeklyFTMSerial").value = data.ftmSerial
     document.getElementById("weeklyDiscussion").value = data.discussion
     document.getElementById("strengthsDiscussionStatus").value = data.strengthsDiscussion
     document.getElementById("weaknessesDiscussionStatus").value = data.weaknessesDiscussion
@@ -205,6 +238,10 @@ export function pushUndoState(formType) {
   const state = captureFormState(formType)
   if (!state) return
 
+  if (manualClearFlags[formType]) {
+    manualClearFlags[formType] = false
+  }
+
   // Remove any states after current pointer (when undoing then making new changes)
   const pointer = undoPointer[formType]
   if (pointer < undoHistory[formType].length - 1) {
@@ -227,7 +264,6 @@ export function pushUndoState(formType) {
  */
 export function undo(formType) {
   if (undoPointer[formType] <= 0) {
-    console.log("[v0] No more undo states")
     return
   }
 
@@ -235,7 +271,11 @@ export function undo(formType) {
   const state = undoHistory[formType][undoPointer[formType]]
   if (state) {
     restoreFormState(state)
-    console.log("[v0] Undo to state:", undoPointer[formType])
+
+    if (deleteConfirmationTimers[formType]) {
+      clearTimeout(deleteConfirmationTimers[formType])
+      deleteConfirmationTimers[formType] = null
+    }
   }
 }
 
@@ -244,7 +284,6 @@ export function undo(formType) {
  */
 export function redo(formType) {
   if (undoPointer[formType] >= undoHistory[formType].length - 1) {
-    console.log("[v0] No more redo states")
     return
   }
 
@@ -252,7 +291,56 @@ export function redo(formType) {
   const state = undoHistory[formType][undoPointer[formType]]
   if (state) {
     restoreFormState(state)
-    console.log("[v0] Redo to state:", undoPointer[formType])
+  }
+}
+
+function isFormMostlyEmpty(formType) {
+  const state = captureFormState(formType)
+  if (!state || !state.data) return true
+
+  const prefilledFields = PREFILLED_FIELDS[formType] || []
+
+  // Check if user-fillable fields are empty
+  const hasUserData = Object.entries(state.data).some(([key, val]) => {
+    // Skip prefilled fields
+    const fieldId = key
+      .replace("officer", "oriOfficer")
+      .replace("officerSerial", "oriOfficerSerial")
+      .replace("fto", "oriFTO")
+      .replace("ftoSerial", "oriFTOSerial")
+      .replace("patrol", "oriPatrolNumber")
+      .replace("date", "oriDate")
+
+    if (
+      prefilledFields.some((pf) => fieldId.includes(pf.replace("ori", "").replace("dor", "").replace("weekly", "")))
+    ) {
+      return false
+    }
+
+    if (typeof val === "object") {
+      return Object.values(val).some((v) => v !== "")
+    }
+    return val !== ""
+  })
+
+  return !hasUserData
+}
+
+function detectManualDeletion(formType) {
+  const currentState = captureFormState(formType)
+  const currentStateStr = JSON.stringify(currentState.data)
+
+  // If form becomes mostly empty and it wasn't empty before
+  if (isFormMostlyEmpty(formType) && lastContentState[formType] && lastContentState[formType] !== currentStateStr) {
+    // Start timer - if user doesn't undo in X seconds, mark as manually cleared
+    if (deleteConfirmationTimers[formType]) {
+      clearTimeout(deleteConfirmationTimers[formType])
+    }
+
+    deleteConfirmationTimers[formType] = setTimeout(() => {
+      markFormAsCleared(formType)
+      deleteConfirmationTimers[formType] = null
+    }, DELETE_CONFIRMATION_DELAY)
   }
 }
 
@@ -278,6 +366,7 @@ export function setupAutoSave(formType) {
         autosaveTimers[formType] = setTimeout(() => {
           pushUndoState(formType)
           autoSaveFormState(formType)
+          detectManualDeletion(formType)
         }, AUTOSAVE_DELAY)
       })
     }
@@ -377,10 +466,22 @@ function getRadioNames(formType) {
  * Check for auto-saved data and prompt user to restore
  */
 export function checkAndPromptRestore(formType) {
+  if (manualClearFlags[formType]) {
+    setupAutoSave(formType)
+    return false
+  }
+
   const saved = loadAutoSavedState(formType)
   if (saved && saved.data) {
-    // Check if there's meaningful data (not just empty form)
-    const hasData = Object.values(saved.data).some((val) => {
+    const prefilledFields = PREFILLED_FIELDS[formType] || []
+    const hasData = Object.entries(saved.data).some(([key, val]) => {
+      // Check if this is a prefilled field
+      const isPrefilled = prefilledFields.some((pf) =>
+        key.toLowerCase().includes(pf.toLowerCase().replace("ori", "").replace("dor", "").replace("weekly", "")),
+      )
+
+      if (isPrefilled) return false
+
       if (typeof val === "object") {
         return Object.values(val).some((v) => v !== "")
       }
