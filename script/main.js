@@ -162,7 +162,16 @@ window.addEventListener("DOMContentLoaded", () => {
   })
 
   document.getElementById("newOrientationReport")?.addEventListener("click", () => {
-    document.getElementById("orientationForm").reset()
+    const form = document.getElementById("orientationForm")
+    const inputs = form.querySelectorAll('input[type="text"], textarea')
+    inputs.forEach((input) => {
+      if (input.id !== "oriFTO" && input.id !== "oriFTOSerial" && input.id !== "oriDate") {
+        input.value = ""
+      }
+    })
+    form.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach((input) => {
+      input.checked = false
+    })
     markFormAsCleared("orientation")
     const name = localStorage.getItem("officerName") || ""
     const serial = localStorage.getItem("serialNumber") || ""
@@ -172,7 +181,16 @@ window.addEventListener("DOMContentLoaded", () => {
   })
 
   document.getElementById("newDORReport")?.addEventListener("click", () => {
-    document.getElementById("dorForm").reset()
+    const form = document.getElementById("dorForm")
+    const inputs = form.querySelectorAll('input[type="text"], textarea')
+    inputs.forEach((input) => {
+      if (input.id !== "dorFTO" && input.id !== "dorFTOSerial" && input.id !== "dorDate") {
+        input.value = ""
+      }
+    })
+    form.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach((input) => {
+      input.checked = false
+    })
     markFormAsCleared("dor")
     const name = localStorage.getItem("officerName") || ""
     const serial = localStorage.getItem("serialNumber") || ""
@@ -182,7 +200,16 @@ window.addEventListener("DOMContentLoaded", () => {
   })
 
   document.getElementById("newWeeklyReport")?.addEventListener("click", () => {
-    document.getElementById("weeklyForm").reset()
+    const form = document.getElementById("weeklyForm")
+    const inputs = form.querySelectorAll('input[type="text"], textarea')
+    inputs.forEach((input) => {
+      if (input.id !== "weeklyFTM" && input.id !== "weeklyFTMSerial" && input.id !== "weeklyDate") {
+        input.value = ""
+      }
+    })
+    form.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach((input) => {
+      input.checked = false
+    })
     markFormAsCleared("weekly")
     const name = localStorage.getItem("officerName") || ""
     const serial = localStorage.getItem("serialNumber") || ""
@@ -192,7 +219,21 @@ window.addEventListener("DOMContentLoaded", () => {
   })
 
   document.getElementById("newFTOFileReport")?.addEventListener("click", () => {
-    document.getElementById("ftofileForm").reset()
+    const form = document.getElementById("ftofileForm")
+    const inputs = form.querySelectorAll('input[type="text"], textarea')
+    inputs.forEach((input) => {
+      if (
+        input.id !== "ftoFileName" &&
+        input.id !== "ftoFileSerial" &&
+        input.id !== "ftoFileTime" &&
+        input.id !== "ftoFileDivision"
+      ) {
+        input.value = ""
+      }
+    })
+    form.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach((input) => {
+      input.checked = false
+    })
     markFormAsCleared("ftofile")
     document.getElementById("ftoFileName").value = localStorage.getItem("officerName") || ""
     document.getElementById("ftoFileSerial").value = localStorage.getItem("serialNumber") || ""
