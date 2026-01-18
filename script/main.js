@@ -1,6 +1,7 @@
 import { generateOrientationBBCode } from "./generators/orientation.js"
 import { generateDORBBCode } from "./generators/dor.js"
 import { generateWeeklyBBCode } from "./generators/weekly.js"
+import { generateCompletionBBCode } from "./generators/completion.js"
 
 import {
   generateFTOFileBBCode,
@@ -65,6 +66,8 @@ function getActiveFormType() {
     return "weekly"
   } else if (document.getElementById("ftoFileGenerator").style.display !== "none") {
     return "ftofile"
+  } else if (document.getElementById("completionRecordGenerator").style.display !== "none") {
+    return "completion"
   }
   return null
 }
@@ -161,6 +164,32 @@ window.addEventListener("DOMContentLoaded", () => {
     checkAndPromptRestore("ftofile")
   })
 
+  // Completion Record Button (main content)
+  document.getElementById("completionRecordButton")?.addEventListener("click", (e) => {
+    e.preventDefault()
+    hideAllSections()
+    document.getElementById("completionDate").value = setTodayDate()
+    document.getElementById("completionFTPManagerDate").value = setTodayDate()
+    document.getElementById("completionFTPSACDate").value = setTodayDate()
+    document.getElementById("completionFTPCoordinatorDate").value = setTodayDate()
+    document.getElementById("completionRecordGenerator").style.display = "block"
+    document.getElementById("completionRecordGenerator").scrollIntoView({ behavior: "smooth" })
+    checkAndPromptRestore("completion")
+  })
+
+  // Completion Record Link (sidebar)
+  document.getElementById("completionRecordLink")?.addEventListener("click", (e) => {
+    e.preventDefault()
+    hideAllSections()
+    document.getElementById("completionDate").value = setTodayDate()
+    document.getElementById("completionFTPManagerDate").value = setTodayDate()
+    document.getElementById("completionFTPSACDate").value = setTodayDate()
+    document.getElementById("completionFTPCoordinatorDate").value = setTodayDate()
+    document.getElementById("completionRecordGenerator").style.display = "block"
+    document.getElementById("completionRecordGenerator").scrollIntoView({ behavior: "smooth" })
+    checkAndPromptRestore("completion")
+  })
+
   document.getElementById("newOrientationReport")?.addEventListener("click", () => {
     const form = document.getElementById("orientationForm")
     const inputs = form.querySelectorAll('input[type="text"], textarea')
@@ -241,6 +270,28 @@ window.addEventListener("DOMContentLoaded", () => {
     document.getElementById("ftoFileDivision").value = "MISSION ROW/METRO"
   })
 
+  document.getElementById("newCompletionRecord")?.addEventListener("click", () => {
+    const form = document.getElementById("completionForm")
+    const inputs = form.querySelectorAll('input[type="text"], input[type="date"], textarea')
+    inputs.forEach((input) => {
+      input.value = ""
+    })
+    form.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach((input) => {
+      input.checked = false
+    })
+    markFormAsCleared("completion")
+    // Reset dates to today
+    const today = new Date()
+    const year = today.getFullYear()
+    const month = String(today.getMonth() + 1).padStart(2, "0")
+    const day = String(today.getDate()).padStart(2, "0")
+    const todayDate = `${year}-${month}-${day}`
+    document.getElementById("completionDate").value = todayDate
+    document.getElementById("completionFTPManagerDate").value = todayDate
+    document.getElementById("completionFTPSACDate").value = todayDate
+    document.getElementById("completionFTPCoordinatorDate").value = todayDate
+  })
+
   document.getElementById("backButton")?.addEventListener("click", () => {
     hideAllSections()
     document.getElementById("mainContent").style.display = "block"
@@ -254,6 +305,11 @@ window.addEventListener("DOMContentLoaded", () => {
     document.getElementById("mainContent").style.display = "block"
   })
   document.getElementById("ftoFileBackButton")?.addEventListener("click", () => {
+    hideAllSections()
+    document.getElementById("mainContent").style.display = "block"
+  })
+  
+  document.getElementById("completionBackButton")?.addEventListener("click", () => {
     hideAllSections()
     document.getElementById("mainContent").style.display = "block"
   })
@@ -285,6 +341,13 @@ window.addEventListener("DOMContentLoaded", () => {
     document.getElementById("ftoFileBBCodeOutput")?.scrollIntoView({ behavior: "smooth" })
     document.getElementById("submitMonthlyLogs")?.addEventListener("click", submitMonthlyLogSection)
     clearAutoSave("ftofile")
+  })
+
+  document.getElementById("generateCompletion")?.addEventListener("click", (e) => {
+    e.preventDefault()
+    generateCompletionBBCode()
+    document.getElementById("completionBBCodeOutput")?.scrollIntoView({ behavior: "smooth" })
+    clearAutoSave("completion")
   })
 
   document.getElementById("remedialRequired")?.addEventListener("change", function () {

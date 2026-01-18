@@ -6,6 +6,7 @@ export function hideAllSections() {
   document.getElementById('dorGenerator').style.display = 'none';
   document.getElementById('weeklyGenerator').style.display = 'none';
   document.getElementById('ftoFileGenerator').style.display = 'none';
+  document.getElementById('completionRecordGenerator').style.display = 'none';
 }
 
 export function populateStaticOfficerInfo() {

@@ -57,6 +57,7 @@
     <div class="dropdown-content">
      <!-- Added Weekly Report link under Field Training Management -->
      <a href="#" id="weeklyReportLink">Weekly Report (FTM USE)</a>
+     <a href="#" id="completionRecordLink">Completion Record (SAC USE)</a>
     </div>
    </div>
   </div>
@@ -89,9 +90,16 @@
        Weekly Report (FTM USE)
       </p>
      </a>
+     <a class="image-button" href="#" id="completionRecordButton">
+      <img alt="Completion Record" src="images/completion-record.png"/>
+      <p>
+       Completion Record (SAC USE)
+      </p>
+     </a>
     </div>
    </div>
   </div>
+  <p>THIS PAGE IS DISAPPEARING AT THE END OF THE MONTH. YOU CAN FIND THE SOURCE CODE HERE: https://github.com/rainbowlarva/FTP-Generators</p>
   <div id="orientationGenerator" style="display: none;">
    <button class="orientation-back-button" id="backButton">
     Back
@@ -1765,7 +1773,88 @@
     <textarea id="ftoFileBBCodeOutput" readonly style="width: calc(100% - 250px); height: 300px; resize: none;"></textarea>
   </div>
 </div>
-  <p>This awesome tool was originally created by Rainbowlarva!</p>
+
+  <!-- Completion Record Generator (SAC USE ONLY) -->
+  <div id="completionRecordGenerator" style="display: none;">
+    <button class="orientation-back-button" id="completionBackButton">Back</button>
+    <div class="container orientation-container">
+      <h1>Field Training Program Completion Record</h1>
+      <p style="color: #d4af37; text-align: center; font-size: 1.1rem; margin-bottom: 20px;">FIELD TRAINING SAC USE ONLY</p>
+      <form id="completionForm">
+        <h2>Probationer Information</h2>
+        <div class="completion-row">
+          <div class="completion-field">
+            <label for="completionProbationer">Probationer's Name:</label>
+            <input id="completionProbationer" type="text" placeholder="Full Name" required />
+          </div>
+          <div class="completion-field">
+            <label for="completionProbationerSerial">Serial No.:</label>
+            <input id="completionProbationerSerial" type="text" placeholder="Serial Number" required />
+          </div>
+          <div class="completion-field">
+            <label for="completionDate">Date of Completion:</label>
+            <input id="completionDate" type="date" required />
+          </div>
+        </div>
+
+        <h2>FTP Manager Signature</h2>
+        <div class="completion-row">
+          <div class="completion-field">
+            <label for="completionFTPManager">FTP Manager Name:</label>
+            <input id="completionFTPManager" type="text" placeholder="Full Name" required />
+          </div>
+          <div class="completion-field">
+            <label for="completionFTPManagerSerial">Serial No.:</label>
+            <input id="completionFTPManagerSerial" type="text" placeholder="Serial Number" required />
+          </div>
+          <div class="completion-field">
+            <label for="completionFTPManagerDate">Date:</label>
+            <input id="completionFTPManagerDate" type="date" required />
+          </div>
+        </div>
+
+        <h2>FTP SAC Signature</h2>
+        <div class="completion-row">
+          <div class="completion-field">
+            <label for="completionFTPSAC">FTP SAC Name:</label>
+            <input id="completionFTPSAC" type="text" placeholder="Full Name" required />
+          </div>
+          <div class="completion-field">
+            <label for="completionFTPSACSerial">Serial No.:</label>
+            <input id="completionFTPSACSerial" type="text" placeholder="Serial Number" required />
+          </div>
+          <div class="completion-field">
+            <label for="completionFTPSACDate">Date:</label>
+            <input id="completionFTPSACDate" type="date" required />
+          </div>
+        </div>
+
+        <h2>FTP Coordinator Signature</h2>
+        <div class="completion-row">
+          <div class="completion-field">
+            <label for="completionFTPCoordinator">FTP Coordinator Name:</label>
+            <input id="completionFTPCoordinator" type="text" placeholder="Full Name" required />
+          </div>
+          <div class="completion-field">
+            <label for="completionFTPCoordinatorSerial">Serial No.:</label>
+            <input id="completionFTPCoordinatorSerial" type="text" placeholder="Serial Number" required />
+          </div>
+          <div class="completion-field">
+            <label for="completionFTPCoordinatorDate">Date:</label>
+            <input id="completionFTPCoordinatorDate" type="date" required />
+          </div>
+        </div>
+
+        <div class="button-row">
+          <button id="generateCompletion" type="button">Generate BBCode</button>
+          <button id="newCompletionRecord" type="button">New Record</button>
+        </div>
+      </form>
+      <h2>Generated BBCode</h2>
+      <textarea id="completionBBCodeOutput" readonly style="width: calc(100% - 250px); height: 300px; resize: none;"></textarea>
+    </div>
+  </div>
+
   <div class="modal-overlay" id="modalOverlay">
    <div class="modal-content">
     <img alt="Modal Image" id="modalImage" src="/placeholder.svg"/>
